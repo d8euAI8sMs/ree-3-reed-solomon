@@ -42,7 +42,13 @@ namespace gf28
         RS_API static byte_t divtable[256][256]; ///< division table i / j
         RS_API static byte_t powtable[256][256]; ///< table of powers i^j
         RS_API static byte_t pwitable[256][256]; ///< table of inverse powers i^(-j)
+        static gfscal_t pwr(byte_t v, byte_t p) { return powtable[v][p]; }
+        static gfscal_t pwi(byte_t v, byte_t p) { return pwitable[v][p]; }
+        static gfscal_t pepwr(byte_t p) { return powtable[pe][p]; }
+        static gfscal_t pepwi(byte_t p) { return pwitable[pe][p]; }
+        static gfscal_t zero() { return 0; }
         byte_t val;
+        gfscal_t() : val(0) {}
         gfscal_t(byte_t o) : val(o) {}
         gfscal_t & operator= (byte_t o) { val = o; return *this; }
         operator byte_t() const { return val; }
@@ -73,6 +79,32 @@ namespace gf28
         if (pow >= 0) return gfscal_t::powtable[s][pow];
         return gfscal_t::pwitable[s][-pow];
     }
+
+    // convenient forms
+    inline gfscal_t operator+ (gfscal_t s1, byte_t s2) { return s1 + gfscal_t(s2); }
+    inline gfscal_t operator+ (byte_t s1, gfscal_t s2) { return gfscal_t(s1) + s2; }
+    inline gfscal_t operator- (gfscal_t s1, byte_t s2) { return s1 - gfscal_t(s2); }
+    inline gfscal_t operator- (byte_t s1, gfscal_t s2) { return gfscal_t(s1) - s2; }
+    inline gfscal_t operator* (gfscal_t s1, byte_t s2) { return s1 * gfscal_t(s2); }
+    inline gfscal_t operator* (byte_t s1, gfscal_t s2) { return gfscal_t(s1) * s2; }
+    inline gfscal_t operator/ (gfscal_t s1, byte_t s2) { return s1 / gfscal_t(s2); }
+    inline gfscal_t operator/ (byte_t s1, gfscal_t s2) { return gfscal_t(s1) / s2; }
+    inline gfscal_t operator^ (gfscal_t s, size_t pow) { return s ^ (int) pow; }
+    inline gfscal_t operator^ (gfscal_t s, byte_t pow) { return s ^ (int) pow; }
+    inline gfscal_t operator^ (gfscal_t s, gfscal_t pow) { return s ^ (int) pow; }
+
+    inline gfscal_t & operator+= (gfscal_t & s1, byte_t s2) { s1 = s1 + s2; return s1; }
+    inline gfscal_t & operator-= (gfscal_t & s1, byte_t s2) { s1 = s1 - s2; return s1; }
+    inline gfscal_t & operator*= (gfscal_t & s1, byte_t s2) { s1 = s1 * s2; return s1; }
+    inline gfscal_t & operator/= (gfscal_t & s1, byte_t s2) { s1 = s1 / s2; return s1; }
+    inline gfscal_t & operator^= (gfscal_t & s, size_t pow) { s = s ^ pow; return s; }
+    inline gfscal_t & operator^= (gfscal_t & s, byte_t pow) { s = s ^ pow; return s; }
+
+    inline gfscal_t & operator+= (gfscal_t & s1, gfscal_t s2) { s1 = s1 + s2; return s1; }
+    inline gfscal_t & operator-= (gfscal_t & s1, gfscal_t s2) { s1 = s1 - s2; return s1; }
+    inline gfscal_t & operator*= (gfscal_t & s1, gfscal_t s2) { s1 = s1 * s2; return s1; }
+    inline gfscal_t & operator/= (gfscal_t & s1, gfscal_t s2) { s1 = s1 / s2; return s1; }
+    inline gfscal_t & operator^= (gfscal_t & s, gfscal_t pow) { s = s ^ pow; return s; }
 
     inline byte_t gflog2(word_t w)
     {
