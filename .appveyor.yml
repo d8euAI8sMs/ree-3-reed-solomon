@@ -6,6 +6,9 @@ image:
 environment:
   project_name: reed-solomon
 
+platform:
+  - x86
+
 configuration:
   - Release
 
