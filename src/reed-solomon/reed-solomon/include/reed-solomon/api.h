@@ -11,6 +11,7 @@
 extern "C"
 {
     using byte_t = std::uint8_t;
+    using word_t = std::uint16_t;
 
     using errc_t = int;
 
