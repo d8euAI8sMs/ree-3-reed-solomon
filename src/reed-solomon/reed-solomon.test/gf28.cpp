@@ -114,5 +114,19 @@ namespace reedsolomontest
             Assert::AreEqual(byte_t(3), (gf28::gfscal_t(2) ^ 3).val, L"", LINE_INFO());
             Assert::AreEqual(byte_t(6), (gf28::gfscal_t(2) ^ (-3)).val, L"", LINE_INFO());
 		}
+
+		TEST_METHOD(gfdft)
+		{
+            gf28::gfinit(11);
+
+            gf28::gfpoly_t p1 = {{ 4, 6, 7, 0, 0, 0, 0 }}, p2, p3;
+            gf28::gfpoly_t p4 = {{ 5, 2, 5, 3, 3, 2, 4 }};
+
+            gf28::gfdfti(p1, p2);
+            gf28::gfdft(p2, p3);
+
+            Assert::IsTrue(p1 == p3, L"", LINE_INFO());
+            Assert::IsTrue(p2 == p4, L"", LINE_INFO());
+		}
 	};
 }
