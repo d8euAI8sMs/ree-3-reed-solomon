@@ -164,5 +164,51 @@ namespace reedsolomontest
             // don't use (50 - x < distinct < 50 + x) to be sure test will pass
             Assert::IsTrue(distinct > 25, L"", LINE_INFO());
         }
+		
+		TEST_METHOD(rs_integrational)
+        {
+            rs_integrational_n(11, 0, L"11");
+            rs_integrational_n(11, 1, L"11");
+            rs_integrational_n(11, 2, L"11");
+
+            rs_integrational_n(13, 0, L"13");
+            rs_integrational_n(13, 1, L"13");
+            rs_integrational_n(13, 2, L"13");
+
+            rs_integrational_n(25, 0, L"25");
+            rs_integrational_n(25, 1, L"25");
+            rs_integrational_n(25, 2, L"25");
+
+            rs_integrational_n(61, 0, L"61");
+            rs_integrational_n(61, 1, L"61");
+            rs_integrational_n(61, 2, L"61");
+        }
+
+    private:
+
+        void rs_integrational_n(word_t gv, size_t ec, const wchar_t * m)
+        {
+            std::array<byte_t, 256> msg;
+
+            for (size_t i = 0; i < 256; ++i) msg[i] = rand() % 8;
+
+            buf_t out = { 0, nullptr }, dec = { 0, nullptr };
+
+            rs_encode({ 256, msg.data() }, gv, out);
+
+            if (ec >= 1) out.buf[rand() % 8] = rand() % 8;
+            if (ec >= 2) out.buf[rand() % 8] = rand() % 8;
+
+            rs_decode(out, gv, dec);
+
+            __try
+            {
+                Assert::IsTrue(std::equal(msg.data(), msg.data() + 256, dec.buf), m, LINE_INFO());
+            }
+            __finally
+            {
+                rs_free(out.buf); rs_free(dec.buf);
+            }
+        }
     };
 }
