@@ -211,13 +211,13 @@ namespace gf28
         return p1;
     }
 
-    inline gfpoly_t & operator* (gfpoly_t & p, gfscal_t v)
+    inline gfpoly_t & operator*= (gfpoly_t & p, gfscal_t v)
     {
         for (size_t i = 0; i < gfpoly_t::pwr(); ++i) p[i] *= v;
         return p;
     }
 
-    inline gfpoly_t & operator/ (gfpoly_t & p, gfscal_t v)
+    inline gfpoly_t & operator/= (gfpoly_t & p, gfscal_t v)
     {
         for (size_t i = 0; i < gfpoly_t::pwr(); ++i) p[i] /= v;
         return p;
