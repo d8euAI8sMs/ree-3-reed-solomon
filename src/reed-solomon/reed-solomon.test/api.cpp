@@ -108,5 +108,61 @@ namespace reedsolomontest
 
             Assert::AreEqual(errc_t(2), err, L"", LINE_INFO());
         }
+		
+		TEST_METHOD(rs_noise_zero)
+        {
+            std::array<byte_t, 100> msg = {}, dup;
+
+            for (size_t i = 0; i < 0; ++i) msg[i] = (byte_t) i;
+
+            dup = msg;
+
+            for (size_t i = 0; i < 10; ++i)
+            {
+                rs_noise({ 100, msg.data() }, 0);
+            }
+
+            Assert::IsTrue(dup == msg, L"", LINE_INFO());
+        }
+		
+		TEST_METHOD(rs_noise_one)
+        {
+            std::array<byte_t, 100> msg = {}, dup;
+
+            for (size_t i = 0; i < 0; ++i) msg[i] = (byte_t) i;
+
+            dup = msg;
+
+            rs_noise({ 100, msg.data() }, 1);
+
+            size_t distinct = 0;
+            for (size_t i = 0; i < 100; ++i)
+            {
+                if (msg[i] != dup[i]) ++distinct;
+            }
+
+            // don't use (distinct == 100) to be sure test will pass
+            Assert::IsTrue(distinct > 80, L"", LINE_INFO());
+        }
+		
+		TEST_METHOD(rs_noise_half)
+        {
+            std::array<byte_t, 100> msg = {}, dup;
+
+            for (size_t i = 0; i < 0; ++i) msg[i] = (byte_t) i;
+
+            dup = msg;
+
+            rs_noise({ 100, msg.data() }, 0.5);
+
+            size_t distinct = 0;
+            for (size_t i = 0; i < 100; ++i)
+            {
+                if (msg[i] != dup[i]) ++distinct;
+            }
+            
+            // don't use (50 - x < distinct < 50 + x) to be sure test will pass
+            Assert::IsTrue(distinct > 25, L"", LINE_INFO());
+        }
     };
 }
