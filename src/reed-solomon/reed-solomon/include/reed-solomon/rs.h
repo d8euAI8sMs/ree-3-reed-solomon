@@ -7,8 +7,6 @@
 
 namespace rs
 {
-    struct buf_t { size_t len; byte_t * buf; };
-
     /**
      * Input-output block-oriented byte stream.
      */

@@ -9,7 +9,7 @@ namespace rs
         size_t i;
         for (i = 0; i < _block; ++i, ++_cursor)
         {
-            if (_cursor >= _data.len) break;
+            if (_cursor >= (size_t)_data.len) break;
             out[i] = _data.buf[_cursor];
         }
 
@@ -24,7 +24,7 @@ namespace rs
         size_t i;
         for (i = 0; i < _block; ++i, ++_cursor)
         {
-            if (_cursor >= _data.len) break;
+            if (_cursor >= (size_t)_data.len) break;
             _data.buf[_cursor] = out[i];
         }
 

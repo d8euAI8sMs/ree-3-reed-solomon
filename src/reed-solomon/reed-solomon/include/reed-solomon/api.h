@@ -13,6 +13,8 @@ extern "C"
     using byte_t = std::uint8_t;
     using word_t = std::uint16_t;
 
+    struct buf_t { int len; byte_t * buf; };
+
     using errc_t = int;
 
     /**
@@ -40,17 +42,21 @@ extern "C"
      * RS code built over the GF(2^8) with generator
      * polynomial {@code gv}.
      * 
-     * <p>Don't forget to call {@ref rs_free} with {@code out}
-     * parameter to release allocated memory.
+     * <p>If buffer of zero length passed in {@code out}
+     * parameter, the function will allocate new buffer
+     * with {@ref rs_alloc}. Don't forget to call
+     * {@ref rs_free} with {@code out.buf} parameter to
+     * release allocated memory.
      * 
      * @param in [in] array of bytes to be encoded (null-terminated)
      * @param gv [in] generator polynomial
-     * @param out [out] the result of the operation - a pointer
-     *                  to null-terminated array of bytes
+     * @param out [out] the result of the operation
      * 
-     * @return 0 on success
+     * @return 0 on success,
+     *         2 if {@code out.len != 0} and {@code out}
+     *         has insufficient space
      */
-    RS_API errc_t rs_encode(byte_t * in, byte_t gv, byte_t ** out);
+    RS_API errc_t rs_encode(buf_t in, word_t gv, buf_t & out);
     
     /**
      * Adds random noise to the given array of bytes.
@@ -60,22 +66,26 @@ extern "C"
      * 
      * @return 0 on success
      */
-    RS_API errc_t rs_noise(byte_t * inout, float freq);
+    RS_API errc_t rs_noise(buf_t inout, float freq);
     
     /**
      * Decodes {@code in} trying to correct all errors (if any).
      * 
-     * <p>Don't forget to call {@ref rs_free} with {@code out}
-     * parameter to release allocated memory.
+     * <p>If buffer of zero length passed in {@code out}
+     * parameter, the function will allocate new buffer
+     * with {@ref rs_alloc}. Don't forget to call
+     * {@ref rs_free} with {@code out.buf} parameter to
+     * release allocated memory.
      * 
      * @param in [in] array of bytes to be decoded (null-terminated)
      * @param gv [in] generator polynomial
-     * @param out [out] the result of the operation - a pointer
-     *                  to null-terminated array of bytes
+     * @param out [out] the result of the operation
      * 
-     * @return 0 on success
+     * @return 0 on success,
+     *         2 if {@code out.len != 0} and {@code out}
+     *         has insufficient space
      */
-    RS_API errc_t rs_decode(byte_t * in, byte_t gv, byte_t ** out);
+    RS_API errc_t rs_decode(buf_t in, word_t gv, buf_t & out);
 
     // C#-style aliases
 
@@ -83,9 +93,9 @@ extern "C"
 
     inline RS_API errc_t ReedSolomonFree(byte_t * ptr) { return rs_free(ptr); }
 
-    inline RS_API errc_t ReedSolomonEncode(byte_t * in, byte_t gv, byte_t ** out) { return rs_encode(in, gv, out); }
+    inline RS_API errc_t ReedSolomonEncode(buf_t in, word_t gv, buf_t & out) { return rs_encode(in, gv, out); }
 
-    inline RS_API errc_t ReedSolomonNoise(byte_t * inout, float freq) { return rs_noise(inout, freq); }
+    inline RS_API errc_t ReedSolomonNoise(buf_t inout, float freq) { return rs_noise(inout, freq); }
 
-    inline RS_API errc_t ReedSolomonDecode(byte_t * in, byte_t gv, byte_t ** out) { return rs_decode(in, gv, out); }
+    inline RS_API errc_t ReedSolomonDecode(buf_t in, byte_t gv, buf_t & out) { return rs_decode(in, gv, out); }
 }
