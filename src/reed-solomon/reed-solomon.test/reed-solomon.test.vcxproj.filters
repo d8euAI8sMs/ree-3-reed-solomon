@@ -32,5 +32,8 @@
     <ClCompile Include="rs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="api.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
