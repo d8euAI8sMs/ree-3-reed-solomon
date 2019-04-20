@@ -35,7 +35,7 @@ namespace rs
     size_t rs2_encoder::encbufsize(size_t in)
     {
         size_t blocksize = rs2::decblocksize();
-        size_t nblocks = (in + (blocksize + 1) / 2) / blocksize;
+        size_t nblocks = (in + (blocksize - 1)) / blocksize;
         return nblocks * rs2::encblocksize();
     }
 

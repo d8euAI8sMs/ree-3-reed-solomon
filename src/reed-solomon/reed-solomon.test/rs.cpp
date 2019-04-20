@@ -90,6 +90,10 @@ namespace reedsolomontest
             Assert::AreEqual(size_t(14), rs::rs2_encoder::encbufsize(5), L"", LINE_INFO());
             Assert::AreEqual(size_t(14), rs::rs2_encoder::encbufsize(6), L"", LINE_INFO());
             Assert::AreEqual(size_t(21), rs::rs2_encoder::encbufsize(7), L"", LINE_INFO());
+
+            gf28::gfinit(25);
+
+            Assert::AreEqual(size_t(360), rs::rs2_encoder::encbufsize(256), L"", LINE_INFO());
         }
 		
 		TEST_METHOD(rs2_encoder_decbufsize)
@@ -102,6 +106,10 @@ namespace reedsolomontest
             Assert::AreEqual(size_t(3), rs::rs2_encoder::decbufsize(7), L"", LINE_INFO());
             Assert::AreEqual(size_t(6), rs::rs2_encoder::decbufsize(14), L"", LINE_INFO());
             Assert::AreEqual(size_t(9), rs::rs2_encoder::decbufsize(21), L"", LINE_INFO());
+
+            gf28::gfinit(25);
+
+            Assert::AreEqual(size_t(264), rs::rs2_encoder::decbufsize(360), L"", LINE_INFO());
         }
 		
 		TEST_METHOD(rs2_encode)
