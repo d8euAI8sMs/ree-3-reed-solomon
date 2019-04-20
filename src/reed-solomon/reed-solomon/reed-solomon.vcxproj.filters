@@ -30,6 +30,9 @@
     <ClInclude Include="include\reed-solomon\rs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\reed-solomon\m22.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

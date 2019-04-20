@@ -59,6 +59,8 @@ namespace rs
     public:
         static size_t encblocksize() { return gf28::gfpoly_t::pwr(); }
         static size_t decblocksize() { return gf28::gfpoly_t::pwr() - 2 * 2; }
+    private:
+        mutable gf28::gfpoly_t _p, _f, _e;
     public:
         rs2() {}
     public:

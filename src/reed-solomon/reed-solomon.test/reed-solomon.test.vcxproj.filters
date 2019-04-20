@@ -35,5 +35,8 @@
     <ClCompile Include="api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="m22.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

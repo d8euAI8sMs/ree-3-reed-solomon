@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include <reed-solomon/rs.h>
+#include <reed-solomon/m22.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -131,6 +132,68 @@ namespace reedsolomontest
             coder.decode(msg, out);
 
             Assert::IsTrue(res == out, L"", LINE_INFO());
+        }
+		
+		TEST_METHOD(rs2_decode_errx2)
+		{
+            gf28::gfinit(11);
+            
+            gf28::gfpoly_t err = {{ 0,0,5,0,3,0,0 }};
+            gf28::gfpoly_t msg = {{ 5,2,5,3,3,2,4 }};
+            gf28::gfpoly_t out = {{ 7,7,7,7,7,7,7 }};
+            gf28::gfpoly_t res = {{ 4,6,7,0,0,0,0 }};
+
+            rs::rs2 coder;
+
+            coder.decode(msg + err, out);
+
+            Assert::IsTrue(out == res, L"", LINE_INFO());
+
+            err = {{ 0,0,0,6,0,3,0 }};
+
+            coder.decode(msg + err, out);
+
+            Assert::IsTrue(out == res, L"", LINE_INFO());
+
+            err = {{ 1,2,0,0,0,0,0 }};
+
+            coder.decode(msg + err, out);
+
+            Assert::IsTrue(out == res, L"", LINE_INFO());
+        }
+		
+		TEST_METHOD(rs2_decode_errx1)
+		{
+            gf28::gfinit(11);
+            
+            gf28::gfpoly_t err = {{ 0,0,5,0,0,0,0 }};
+            gf28::gfpoly_t msg = {{ 5,2,5,3,3,2,4 }};
+            gf28::gfpoly_t out = {{ 7,7,7,7,7,7,7 }};
+            gf28::gfpoly_t res = {{ 4,6,7,0,0,0,0 }};
+
+            rs::rs2 coder;
+
+            coder.decode(msg + err, out);
+
+            Assert::IsTrue(out == res, L"", LINE_INFO());
+
+            err = {{ 0,0,0,6,0,0,0 }};
+
+            coder.decode(msg + err, out);
+
+            Assert::IsTrue(out == res, L"", LINE_INFO());
+
+            err = {{ 1,0,0,0,0,0,0 }};
+
+            coder.decode(msg + err, out);
+
+            Assert::IsTrue(out == res, L"", LINE_INFO());
+
+            err = {{ 0,0,0,0,0,0,3 }};
+
+            coder.decode(msg + err, out);
+
+            Assert::IsTrue(out == res, L"", LINE_INFO());
         }
 		
 		TEST_METHOD(rs2_encoder_encode)
