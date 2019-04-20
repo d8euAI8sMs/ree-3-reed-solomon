@@ -5,6 +5,7 @@ image:
   
 environment:
   project_name: reed-solomon
+  project_tests_name: reed-solomon.test
 
 platform:
   - x86
@@ -17,6 +18,10 @@ install:
 
 build:
   project: src\%project_name%\%project_name%.sln
+  
+test_script:
+  - vstest.console /logger:Appveyor src\%project_name%\%CONFIGURATION%\%project_tests_name%.dll
 
 artifacts:
   - path: 'src\%project_name%\%CONFIGURATION%\%project_name%.dll'
+  - path: 'src\%project_name%\%CONFIGURATION%\%project_tests_name%.dll'
