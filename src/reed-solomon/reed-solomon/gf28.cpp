@@ -63,8 +63,8 @@ namespace gf28
             loop:;
         }
 
-        if (gfscal_t::pe == 0) return errc_t { 1 }; //TODO: magic constant
+        if (gfscal_t::pe == 0) return errc::errc_invalid_argument;
 
-        return 0;
+        return errc::errc_success;
     }
 }

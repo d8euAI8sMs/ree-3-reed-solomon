@@ -17,6 +17,14 @@ extern "C"
 
     using errc_t = int;
 
+    namespace errc
+    {
+        static const errc_t errc_success = 0;
+        static const errc_t errc_out_of_memory = 1;
+        static const errc_t errc_insufficient_buffer_space = 2;
+        static const errc_t errc_invalid_argument = 3;
+    }
+
     /**
      * Allocates {@code len} bytes and stores
      * the pointer to {@code ptr}.
@@ -24,7 +32,8 @@ extern "C"
      * @param ptr [out] pointer to newly allocated memory
      * @param len [in] requested length (in bytes)
      * 
-     * @return 0 on success
+     * @return {@ref errc_success} on success,
+     *         {@ref errc_out_of_memory} on memory allocation error
      */
     RS_API errc_t rs_alloc(byte_t ** ptr, int len);
     
@@ -33,7 +42,7 @@ extern "C"
      * 
      * @param ptr [in] pointer to memory
      * 
-     * @return 0 on success
+     * @return {@ref errc_success} on success
      */
     RS_API errc_t rs_free(byte_t * ptr);
     
@@ -52,8 +61,9 @@ extern "C"
      * @param gv [in] generator polynomial
      * @param out [out] the result of the operation
      * 
-     * @return 0 on success,
-     *         2 if {@code out.len != 0} and {@code out}
+     * @return {@ref errc_success} on success,
+     *         {@ref errc_insufficient_buffer_space}
+     *         if {@code out.len != 0} and {@code out}
      *         has insufficient space
      */
     RS_API errc_t rs_encode(buf_t in, word_t gv, buf_t & out);
@@ -70,7 +80,7 @@ extern "C"
      * @param ec [in] max error number per block of symbols
      * @param freq [in] noise rate per block (0 - no blocks affected, 1 - all blocks affected)
      * 
-     * @return 0 on success
+     * @return {@ref errc_success} on success
      */
     RS_API errc_t rs_noise(buf_t inout, word_t gv, size_t ec, float freq);
     
@@ -87,8 +97,9 @@ extern "C"
      * @param gv [in] generator polynomial
      * @param out [out] the result of the operation
      * 
-     * @return 0 on success,
-     *         2 if {@code out.len != 0} and {@code out}
+     * @return {@ref errc_success} on success,
+     *         {@ref errc_insufficient_buffer_space}
+     *         if {@code out.len != 0} and {@code out}
      *         has insufficient space
      */
     RS_API errc_t rs_decode(buf_t in, word_t gv, buf_t & out);

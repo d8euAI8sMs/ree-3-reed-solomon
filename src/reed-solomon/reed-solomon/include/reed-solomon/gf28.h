@@ -29,8 +29,8 @@ namespace gf28
      * <p>See statics of {@ref gfscal_t} for details.
      * 
      * @param gv [in] generator polynomial
-     * @return 0 on success
-     *         1 if no primitive element found
+     * @return {@ref errc_success} on success
+     *         {@ref errc_invalid_argument} if no primitive element found
      */
     RS_API errc_t gfinit(word_t gv);
 
