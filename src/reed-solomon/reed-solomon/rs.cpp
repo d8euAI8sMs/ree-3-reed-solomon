@@ -5,13 +5,31 @@
 
 namespace rs
 {
+    namespace
+    {
+    }
+
     size_t blockstream::get(gf28::gfpoly_t & out)
     {
         size_t i;
-        for (i = 0; i < _block; ++i, ++_cursor)
+        for (i = 0; i < _block; ++i)
         {
-            if (_cursor >= (size_t)_data.len) break;
-            out[i] = _data.buf[_cursor];
+            size_t bytepos = _cursor / 8;
+            size_t bitpos = _cursor - bytepos * 8;
+            if (bytepos >= (size_t)_data.len) break;
+            byte_t s = 0;
+            for (size_t j = 0; j < _bps; ++j)
+            {
+                if (bytepos >= (size_t)_data.len) break;
+                s |= ((_data.buf[bytepos] >> bitpos) & 1) << j;
+                ++_cursor;
+                if (++bitpos >= 8)
+                {
+                    bitpos = 0;
+                    ++bytepos;
+                }
+            }
+            out[i] = s;
         }
 
         for (size_t j = i; j < _block; ++j)
@@ -23,33 +41,52 @@ namespace rs
     size_t blockstream::put(const gf28::gfpoly_t & out)
     {
         size_t i;
-        for (i = 0; i < _block; ++i, ++_cursor)
+        for (i = 0; i < _block; ++i)
         {
-            if (_cursor >= (size_t)_data.len) break;
-            _data.buf[_cursor] = out[i];
+            size_t bytepos = _cursor / 8;
+            size_t bitpos = _cursor - bytepos * 8;
+            if (bytepos >= (size_t)_data.len) break;
+            for (size_t j = 0; j < _bps; ++j)
+            {
+                if (bytepos >= (size_t)_data.len) break;
+                if (bitpos == 0) _data.buf[bytepos] = 0;
+                _data.buf[bytepos] |= ((out[i] >> j) & 1) << bitpos;
+                ++_cursor;
+                if (++bitpos >= 8)
+                {
+                    bitpos = 0;
+                    ++bytepos;
+                }
+            }
         }
 
         return i;
     }
 
-    size_t rs2_encoder::encbufsize(size_t in)
+    size_t rs2_encoder::encbufsize(size_t in, bool pack)
     {
-        size_t blocksize = rs2::decblocksize();
-        size_t nblocks = (in + (blocksize - 1)) / blocksize;
-        return nblocks * rs2::encblocksize();
+        size_t inbits = in * 8;
+        size_t inblocksize = rs2::decblocksize() * (pack ? gf28::gfscal_t::gp : 8);
+        size_t nblocks = (inbits + (inblocksize - 1)) / inblocksize;
+        size_t outblocksize = rs2::encblocksize() * (pack ? gf28::gfscal_t::gp : 8);
+        size_t outbits = nblocks * outblocksize;
+        return (outbits + 7) / 8;
     }
 
-    size_t rs2_encoder::decbufsize(size_t in)
+    size_t rs2_encoder::decbufsize(size_t in, bool pack)
     {
-        size_t blocksize = rs2::encblocksize();
-        size_t nblocks = in / blocksize;
-        return nblocks * rs2::decblocksize();
+        size_t inbits = in * 8;
+        size_t inblocksize = rs2::encblocksize() * (pack ? gf28::gfscal_t::gp : 8);
+        size_t nblocks = inbits / inblocksize;
+        size_t outblocksize = rs2::decblocksize() * (pack ? gf28::gfscal_t::gp : 8);
+        size_t outbits = nblocks * outblocksize;
+        return (outbits + 7) / 8;
     }
 
     void rs2_encoder::encode(buf_t in, buf_t out) const
     {
-        blockstream instream(in, rs2::decblocksize());
-        blockstream outstream(out, rs2::encblocksize());
+        blockstream instream(in, _pack ? gf28::gfscal_t::gp : 8, rs2::decblocksize());
+        blockstream outstream(out, _pack ? gf28::gfscal_t::gp : 8, rs2::encblocksize());
 
         while (instream.get(_msg))
         {
@@ -60,8 +97,8 @@ namespace rs
 
     void rs2_encoder::decode(buf_t in, buf_t out) const
     {
-        blockstream instream(in, rs2::encblocksize());
-        blockstream outstream(out, rs2::decblocksize());
+        blockstream instream(in, _pack ? gf28::gfscal_t::gp : 8, rs2::encblocksize());
+        blockstream outstream(out, _pack ? gf28::gfscal_t::gp : 8, rs2::decblocksize());
 
         while (instream.get(_msg))
         {

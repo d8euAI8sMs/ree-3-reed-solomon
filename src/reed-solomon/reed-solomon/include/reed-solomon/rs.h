@@ -15,30 +15,33 @@ namespace rs
     private:
         buf_t _data;
         size_t _block;
+        size_t _bps;
         size_t _cursor;
     public:
         /**
          * Creates new stream backed by the given buffer
-         * with the provided block size.
+         * with the provided block size and a number of
+         * bits per one symbol.
          */
-        blockstream(buf_t data, size_t block) : _data(data), _block(block), _cursor(0) {}
+        blockstream(buf_t data, size_t bps, size_t block)
+            : _data(data), _bps(bps), _block(block), _cursor(0) {}
     public:
         /**
-         * Reads bytes from the stream till its end and
+         * Reads symbols from the stream till its end and
          * stores them to {@code out}. If the number of
-         * bytes read less than block size, fills the
+         * symbols read less than block size, fills the
          * rest of the block with zeros.
          * 
          * @param out [out] buffer
-         * @return a number of bytes actually read
+         * @return a number of symbols actually read
          */
         RS_API size_t get(gf28::gfpoly_t & out);
         /**
-         * Writes data from the given buffer to the
+         * Writes symbols from the given buffer to the
          * backing byte buffer.
          * 
          * @param in [in] buffer
-         * @return a number of bytes actually written
+         * @return a number of symbols actually written
          */
         RS_API size_t put(const gf28::gfpoly_t & in);
     };
@@ -78,14 +81,33 @@ namespace rs
     class rs2_encoder
     {
     public:
-        RS_API static size_t encbufsize(size_t in);
-        RS_API static size_t decbufsize(size_t in);
+        /**
+         * Buffer size in bytes required for encoding
+         * {@code in} input bytes.
+         */
+        RS_API static size_t encbufsize(size_t in, bool pack);
+        /**
+         * Buffer size in bytes required for decoding
+         * {@code in} input bytes.
+         */
+        RS_API static size_t decbufsize(size_t in, bool pack);
     private:
-        rs2 _rs;
+        const rs2 _rs;
         mutable gf28::gfpoly_t _msg;
         mutable gf28::gfpoly_t _buf;
+        const bool _pack;
     public:
-        rs2_encoder() {}
+        /**
+         * Creates RS-2 coder with the given
+         * package scenario. If {@code pack}
+         * is false, each byte in {@code in}
+         * and {@code out} is treated as symbol
+         * (i.e. effective {@code bps} is 8).
+         * Otherwise, {@code bps} value comes
+         * from {@ref gf28::gfscal_t::gp}.
+         */
+        rs2_encoder(bool pack) : _pack(pack) {}
+        rs2_encoder() : _pack(false) {}
     public:
         RS_API void encode(buf_t in, buf_t out) const;
         RS_API void decode(buf_t in, buf_t out) const;
