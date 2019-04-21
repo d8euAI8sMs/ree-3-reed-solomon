@@ -57,7 +57,7 @@ extern "C"
      * {@ref rs_free} with {@code out.buf} parameter to
      * release allocated memory.
      * 
-     * @param in [in] array of bytes to be encoded (null-terminated)
+     * @param in [in] array of bytes to be encoded
      * @param gv [in] generator polynomial
      * @param out [out] the result of the operation
      * 
@@ -76,7 +76,7 @@ extern "C"
      * per block of symbols is a known value. Moreover,
      * error is added to symbols, not bytes.
      * 
-     * @param inout [inout] array of bytes to be noised (null-terminated)
+     * @param inout [inout] array of bytes to be noised
      * @param ec [in] max error number per block of symbols
      * @param freq [in] noise rate per block (0 - no blocks affected, 1 - all blocks affected)
      * 
@@ -93,7 +93,7 @@ extern "C"
      * {@ref rs_free} with {@code out.buf} parameter to
      * release allocated memory.
      * 
-     * @param in [in] array of bytes to be decoded (null-terminated)
+     * @param in [in] array of bytes to be decoded
      * @param gv [in] generator polynomial
      * @param out [out] the result of the operation
      * 
