@@ -195,6 +195,10 @@ namespace reedsolomontest
             rs_integrational_n(61, 0, L"61");
             rs_integrational_n(61, 1, L"61");
             rs_integrational_n(61, 2, L"61");
+
+            rs_integrational_n(499, 0, L"61");
+            rs_integrational_n(499, 1, L"61");
+            rs_integrational_n(499, 2, L"61");
         }
 
     private:
@@ -240,13 +244,13 @@ namespace reedsolomontest
 
         void rs_integrational_n(word_t gv, size_t ec, const wchar_t * m)
         {
-            std::array<byte_t, 256> msg;
+            std::array<byte_t, 1000> msg;
 
-            for (size_t i = 0; i < 256; ++i) msg[i] = (byte_t)(rand() % 0xff);
+            for (size_t i = 0; i < 1000; ++i) msg[i] = (byte_t)(rand() % 0xff);
 
             buf_t out = { 0, nullptr }, dec = { 0, nullptr };
 
-            rs_encode({ 256, msg.data() }, gv, out);
+            rs_encode({ 1000, msg.data() }, gv, out);
 
             rs_noise(out, gv, ec, 1);
 
@@ -254,7 +258,7 @@ namespace reedsolomontest
 
             __try
             {
-                Assert::IsTrue(std::equal(msg.data(), msg.data() + 256, dec.buf), m, LINE_INFO());
+                Assert::IsTrue(std::equal(msg.data(), msg.data() + 1000, dec.buf), m, LINE_INFO());
             }
             __finally
             {
