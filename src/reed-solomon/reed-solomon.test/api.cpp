@@ -15,34 +15,69 @@ namespace reedsolomontest
 		
 		TEST_METHOD(rs_encode_encode)
         {
-            std::array<byte_t, 9> msg = {{ 4,6,7,0,0,0,4,6,7 }};
-            std::array<byte_t, 21> out = {{ 7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7 }};
-            std::array<byte_t, 21> res = {{ 5,2,5,3,3,2,4,0,0,0,0,0,0,0,5,2,5,3,3,2,4 }};
+            unsigned long long res =
+                (5LL << 0)  | (2LL << 3)  | (5LL << 6)  |
+                (3LL << 9)  | (3LL << 12) | (2LL << 15) |
+                (4LL << 18) | (0LL << 21) | (0LL << 24) |
+                (0LL << 27) | (0LL << 30) | (0LL << 33) |
+                (0LL << 36) | (0LL << 39) | (5LL << 42) |
+                (2LL << 45) | (5LL << 48) | (3LL << 51) |
+                (3LL << 54) | (2LL << 57) | (4LL << 60);
+            byte_t out[11];
+            unsigned long long outl;
+            unsigned long long msg =
+                (4LL << 0)  | (6LL << 3)  | (7LL << 6)  |
+                (0LL << 9)  | (0LL << 12) | (0LL << 15) |
+                (4LL << 18) | (6LL << 21) | (7LL << 24);
 
-            buf_t inb = { 9, msg.data() }, outb = { 21, out.data() };
+            buf_t inb = { 4, (byte_t*)&msg }, outb = { 11, out };
 
             errc_t err = rs_encode(inb, 11, outb);
             
             Assert::AreEqual(errc_t(0), err, L"", LINE_INFO());
-            Assert::IsTrue(out == res, L"", LINE_INFO());
+
+            outl = (*((unsigned long long *)out));
+
+            Assert::IsTrue(outl == res, L"", LINE_INFO());
+
+            Assert::AreEqual(byte_t(0), out[10], L"", LINE_INFO());
+            Assert::AreEqual(byte_t(0), out[9], L"", LINE_INFO());
+            Assert::AreEqual(byte_t(0), out[8], L"", LINE_INFO());
         }
 		
 		TEST_METHOD(rs_encode_alloc)
         {
-            std::array<byte_t, 9> msg = {{ 4,6,7,0,0,0,4,6,7 }};
-            std::array<byte_t, 21> res = {{ 5,2,5,3,3,2,4,0,0,0,0,0,0,0,5,2,5,3,3,2,4 }};
+            unsigned long long res =
+                (5LL << 0)  | (2LL << 3)  | (5LL << 6)  |
+                (3LL << 9)  | (3LL << 12) | (2LL << 15) |
+                (4LL << 18) | (0LL << 21) | (0LL << 24) |
+                (0LL << 27) | (0LL << 30) | (0LL << 33) |
+                (0LL << 36) | (0LL << 39) | (5LL << 42) |
+                (2LL << 45) | (5LL << 48) | (3LL << 51) |
+                (3LL << 54) | (2LL << 57) | (4LL << 60);
+            unsigned long long out = 0;
+            unsigned long long msg =
+                (4LL << 0)  | (6LL << 3)  | (7LL << 6)  |
+                (0LL << 9)  | (0LL << 12) | (0LL << 15) |
+                (4LL << 18) | (6LL << 21) | (7LL << 24);
 
-            buf_t inb = { 9, msg.data() }, outb = { 0, nullptr };
+            buf_t inb = { 4, (byte_t*)&msg }, outb = { 0, nullptr };
 
             __try
             {
                 errc_t err = rs_encode(inb, 11, outb);
             
                 Assert::AreEqual(errc_t(0), err, L"", LINE_INFO());
-                Assert::AreEqual(21, outb.len, L"", LINE_INFO());
+                Assert::AreEqual(11, outb.len, L"", LINE_INFO());
                 Assert::AreNotEqual(0, outb.len, L"", LINE_INFO());
 
-                Assert::IsTrue(std::equal(res.data(), res.data() + 21, outb.buf), L"", LINE_INFO());
+                out = (*((unsigned long long *)outb.buf));
+
+                Assert::IsTrue(out == res, L"", LINE_INFO());
+
+                Assert::AreEqual(byte_t(0), outb.buf[10], L"", LINE_INFO());
+                Assert::AreEqual(byte_t(0), outb.buf[9], L"", LINE_INFO());
+                Assert::AreEqual(byte_t(0), outb.buf[8], L"", LINE_INFO());
             }
             __finally
             {
@@ -63,11 +98,21 @@ namespace reedsolomontest
 		
 		TEST_METHOD(rs_decode_decode)
         {
-            std::array<byte_t, 21> msg = {{ 5,2,5,3,3,2,4,0,0,0,0,0,0,0,5,2,5,3,3,2,4 }};
-            std::array<byte_t, 9>  out = {{ 7,7,7,7,7,7,7,7,7 }};
-            std::array<byte_t, 9>  res = {{ 4,6,7,0,0,0,4,6,7 }};
+            unsigned long long msg =
+                (5LL << 0)  | (2LL << 3)  | (5LL << 6)  |
+                (3LL << 9)  | (3LL << 12) | (2LL << 15) |
+                (4LL << 18) | (0LL << 21) | (0LL << 24) |
+                (0LL << 27) | (0LL << 30) | (0LL << 33) |
+                (0LL << 36) | (0LL << 39) | (5LL << 42) |
+                (2LL << 45) | (5LL << 48) | (3LL << 51) |
+                (3LL << 54) | (2LL << 57) | (4LL << 60);
+            unsigned long long out = 0;
+            unsigned long long res =
+                (4LL << 0)  | (6LL << 3)  | (7LL << 6)  |
+                (0LL << 9)  | (0LL << 12) | (0LL << 15) |
+                (4LL << 18) | (6LL << 21) | (7LL << 24);
 
-            buf_t inb = { 21, msg.data() }, outb = { 9, out.data() };
+            buf_t inb = { 8, (byte_t*)&msg }, outb = { 8, (byte_t*)&out };
 
             errc_t err = rs_decode(inb, 11, outb);
             
@@ -77,20 +122,33 @@ namespace reedsolomontest
 		
 		TEST_METHOD(rs_decode_alloc)
         {
-            std::array<byte_t, 21> msg = {{ 5,2,5,3,3,2,4,0,0,0,0,0,0,0,5,2,5,3,3,2,4 }};
-            std::array<byte_t, 9>  res = {{ 4,6,7,0,0,0,4,6,7 }};
+            unsigned long long msg =
+                (5LL << 0)  | (2LL << 3)  | (5LL << 6)  |
+                (3LL << 9)  | (3LL << 12) | (2LL << 15) |
+                (4LL << 18) | (0LL << 21) | (0LL << 24) |
+                (0LL << 27) | (0LL << 30) | (0LL << 33) |
+                (0LL << 36) | (0LL << 39) | (5LL << 42) |
+                (2LL << 45) | (5LL << 48) | (3LL << 51) |
+                (3LL << 54) | (2LL << 57) | (4LL << 60);
+            unsigned long long out = 0;
+            unsigned long long res =
+                (4LL << 0)  | (6LL << 3)  | (7LL << 6)  |
+                (0LL << 9)  | (0LL << 12) | (0LL << 15) |
+                (4LL << 18) | (6LL << 21) | (7LL << 24);
 
-            buf_t inb = { 21, msg.data() }, outb = { 0, nullptr };
+            buf_t inb = { 8, (byte_t*)&msg }, outb = { 0, nullptr };
 
             __try
             {
                 errc_t err = rs_decode(inb, 11, outb);
             
                 Assert::AreEqual(errc_t(0), err, L"", LINE_INFO());
-                Assert::AreEqual(9, outb.len, L"", LINE_INFO());
+                Assert::AreEqual(4, outb.len, L"", LINE_INFO());
                 Assert::AreNotEqual(0, outb.len, L"", LINE_INFO());
 
-                Assert::IsTrue(std::equal(res.data(), res.data() + 9, outb.buf), L"", LINE_INFO());
+                out = (*((unsigned long long *)outb.buf)) & 0xffffffff;
+
+                Assert::IsTrue(out == res, L"", LINE_INFO());
             }
             __finally
             {
