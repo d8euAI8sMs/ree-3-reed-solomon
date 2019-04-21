@@ -6,7 +6,7 @@ namespace gf28
 {
     word_t gfscal_t::gv = 0;
     byte_t gfscal_t::gp = 0;
-    byte_t gfscal_t::gm = 0;
+    word_t gfscal_t::gm = 0;
     byte_t gfscal_t::pe = 0;
     byte_t gfscal_t::multable[256][256];
     byte_t gfscal_t::divtable[256][256];

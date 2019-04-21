@@ -39,7 +39,7 @@ namespace gf28
     {
         RS_API static word_t gv; ///< generator polynomial
         RS_API static byte_t gp; ///< actual order of GF calculated as floor(log2(gv))
-        RS_API static byte_t gm; ///< 2^gp
+        RS_API static word_t gm; ///< 2^gp
         RS_API static byte_t pe; ///< primitive element of GF
         RS_API static byte_t multable[256][256]; ///< multiplication table i * j
         RS_API static byte_t divtable[256][256]; ///< division table i / j
