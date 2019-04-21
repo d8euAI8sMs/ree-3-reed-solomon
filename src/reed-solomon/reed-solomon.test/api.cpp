@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include <reed-solomon/api.h>
+#include <reed-solomon/rs.h>
 
 #include <array>
 
@@ -167,60 +168,14 @@ namespace reedsolomontest
             Assert::AreEqual(errc_t(2), err, L"", LINE_INFO());
         }
 		
-		TEST_METHOD(rs_noise_zero)
+		TEST_METHOD(rs_noise_all)
         {
-            std::array<byte_t, 100> msg = {}, dup;
-
-            for (size_t i = 0; i < 0; ++i) msg[i] = (byte_t) i;
-
-            dup = msg;
-
-            for (size_t i = 0; i < 10; ++i)
-            {
-                rs_noise({ 100, msg.data() }, 0);
-            }
-
-            Assert::IsTrue(dup == msg, L"", LINE_INFO());
-        }
-		
-		TEST_METHOD(rs_noise_one)
-        {
-            std::array<byte_t, 100> msg = {}, dup;
-
-            for (size_t i = 0; i < 0; ++i) msg[i] = (byte_t) i;
-
-            dup = msg;
-
-            rs_noise({ 100, msg.data() }, 1);
-
-            size_t distinct = 0;
-            for (size_t i = 0; i < 100; ++i)
-            {
-                if (msg[i] != dup[i]) ++distinct;
-            }
-
-            // don't use (distinct == 100) to be sure test will pass
-            Assert::IsTrue(distinct > 80, L"", LINE_INFO());
-        }
-		
-		TEST_METHOD(rs_noise_half)
-        {
-            std::array<byte_t, 100> msg = {}, dup;
-
-            for (size_t i = 0; i < 0; ++i) msg[i] = (byte_t) i;
-
-            dup = msg;
-
-            rs_noise({ 100, msg.data() }, 0.5);
-
-            size_t distinct = 0;
-            for (size_t i = 0; i < 100; ++i)
-            {
-                if (msg[i] != dup[i]) ++distinct;
-            }
-            
-            // don't use (50 - x < distinct < 50 + x) to be sure test will pass
-            Assert::IsTrue(distinct > 25, L"", LINE_INFO());
+            rs_noise_n(1, 0, 0);
+            rs_noise_n(2, 0, 0);
+            rs_noise_n(1, 1, 0.8f);
+            rs_noise_n(2, 1, 0.8f);
+            rs_noise_n(1, 0.5f, 0.25f);
+            rs_noise_n(2, 0.5f, 0.25f);
         }
 		
 		TEST_METHOD(rs_integrational)
@@ -243,6 +198,45 @@ namespace reedsolomontest
         }
 
     private:
+		
+		void rs_noise_n(size_t ec, float freq, float thres)
+        {
+            std::array<byte_t, 100> msg = {}, dup;
+
+            for (size_t i = 0; i < 100; ++i) msg[i] = (byte_t) i;
+
+            dup = msg;
+
+            rs_noise({ 100, msg.data() }, 11, ec, freq);
+
+            size_t block = rs::rs2::encblocksize();
+
+            rs::blockstream in1({ 100, msg.data() }, gf28::gfscal_t::gp, block);
+            rs::blockstream in2({ 100, dup.data() }, gf28::gfscal_t::gp, block);
+
+            gf28::gfpoly_t buf1, buf2;
+
+            size_t epb = 0, et = 0, bc = 0, read;
+
+            while (read = in1.get(buf1))
+            {
+                in2.get(buf2);
+                
+                size_t e = 0;
+                for (size_t i = 0; i < read; ++i)
+                {
+                    if (buf1[i] != buf2[i]) ++e;
+                }
+
+                epb = (epb > e ? epb : e);
+                et += (e > 0 ? 1 : 0);
+
+                ++bc;
+            }
+
+            Assert::IsTrue((float)et / (float)bc >= thres, L"", LINE_INFO());
+            Assert::IsTrue(epb <= ec, L"", LINE_INFO());
+        }
 
         void rs_integrational_n(word_t gv, size_t ec, const wchar_t * m)
         {

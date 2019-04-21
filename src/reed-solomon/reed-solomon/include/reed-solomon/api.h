@@ -59,14 +59,20 @@ extern "C"
     RS_API errc_t rs_encode(buf_t in, word_t gv, buf_t & out);
     
     /**
-     * Adds random noise to the given array of bytes.
+     * Adds random noise to the encoded data.
+     *
+     * <p>The function is symbol- and block-aware,
+     * not just byte-aware. I.e. a number of errors
+     * per block of symbols is a known value. Moreover,
+     * error is added to symbols, not bytes.
      * 
      * @param inout [inout] array of bytes to be noised (null-terminated)
-     * @param freq [in] noise rate per byte (0 - no bytes affected, 1 - all bytes affected)
+     * @param ec [in] max error number per block of symbols
+     * @param freq [in] noise rate per block (0 - no blocks affected, 1 - all blocks affected)
      * 
      * @return 0 on success
      */
-    RS_API errc_t rs_noise(buf_t inout, float freq);
+    RS_API errc_t rs_noise(buf_t inout, word_t gv, size_t ec, float freq);
     
     /**
      * Decodes {@code in} trying to correct all errors (if any).
@@ -95,7 +101,7 @@ extern "C"
 
     inline RS_API errc_t ReedSolomonEncode(buf_t in, word_t gv, buf_t & out) { return rs_encode(in, gv, out); }
 
-    inline RS_API errc_t ReedSolomonNoise(buf_t inout, float freq) { return rs_noise(inout, freq); }
+    inline RS_API errc_t ReedSolomonNoise(buf_t inout, word_t gv, size_t ec, float freq) { return rs_noise(inout, gv, ec, freq); }
 
     inline RS_API errc_t ReedSolomonDecode(buf_t in, byte_t gv, buf_t & out) { return rs_decode(in, gv, out); }
 }
