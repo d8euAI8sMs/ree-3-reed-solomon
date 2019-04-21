@@ -15,6 +15,8 @@ namespace gf28
 
     errc_t gfinit(word_t gv)
     {
+        if (gfscal_t::gv == gv) return errc::errc_success;
+
         auto p = gfscal_t::gp = gflog2(gv);
         auto l = gfscal_t::gm = (1 << p);
 
