@@ -242,14 +242,13 @@ namespace reedsolomontest
         {
             std::array<byte_t, 256> msg;
 
-            for (size_t i = 0; i < 256; ++i) msg[i] = rand() % 8;
+            for (size_t i = 0; i < 256; ++i) msg[i] = (byte_t)(rand() % 0xff);
 
             buf_t out = { 0, nullptr }, dec = { 0, nullptr };
 
             rs_encode({ 256, msg.data() }, gv, out);
 
-            if (ec >= 1) out.buf[rand() % 8] = rand() % 8;
-            if (ec >= 2) out.buf[rand() % 8] = rand() % 8;
+            rs_noise(out, gv, ec, 1);
 
             rs_decode(out, gv, dec);
 
