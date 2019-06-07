@@ -1,0 +1,8 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:System;assembly=mscorlib">
+    <c:Double x:Key="window_height">550</c:Double>
+    <c:Double x:Key="window_width">1100</c:Double>
+    <c:Double x:Key="data_collumn_width">170</c:Double>
+</ResourceDictionary>

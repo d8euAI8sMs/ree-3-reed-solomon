@@ -15,6 +15,11 @@ configuration:
 
 install:
   - git submodule update --init --recursive
+  
+before_build:
+- cd src\%project_name%\
+- nuget restore
+- cd ..\..
 
 build:
   project: src\%project_name%\%project_name%.sln
