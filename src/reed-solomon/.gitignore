@@ -8,5 +8,6 @@ obj
 ipch
 Debug
 Release
+packages
 bin
 ReadMe.txt

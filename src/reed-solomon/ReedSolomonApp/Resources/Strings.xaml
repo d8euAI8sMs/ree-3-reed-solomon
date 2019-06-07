@@ -1,0 +1,31 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:System;assembly=mscorlib">
+    <c:String x:Key="main_window_title">Reed-Solomon Encoder</c:String>
+    <c:String x:Key="save">Save encoded bytes</c:String>
+    <c:String x:Key="bytes">Bytes</c:String>
+    <c:String x:Key="text">Text</c:String>
+    <c:String x:Key="encode">Encode</c:String>
+    <c:String x:Key="decode">Decode</c:String>
+    <c:String x:Key="noise">Noise</c:String>
+    <c:String x:Key="enter_input_text">Please, enter the text to be encoded...</c:String>
+    <c:String x:Key="pol_gen">Polynomial generator</c:String>
+    <c:String x:Key="err_count">Error count</c:String>
+    <c:String x:Key="err_freq">Error Frequency</c:String>
+    <c:String x:Key="default">default</c:String>
+    <c:String x:Key="reset">Reset</c:String>
+    <c:String x:Key="reset_message">Do you wanna reset encoding?</c:String>
+    <c:String x:Key="success">Success</c:String>
+    <c:String x:Key="noise_decoded_message">Noised bytes were decoded successfully</c:String>
+    <c:String x:Key="clear_decoded_message">Encoded bytes were decoded successfully</c:String>
+    <c:String x:Key="path">Output path</c:String>
+    <c:String x:Key="error">Error!</c:String>
+    <c:String x:Key="incorrect_data">Incorrect data!</c:String>
+    <c:String x:Key="attantion">Attantion!</c:String>
+    <c:String x:Key="noise_postponed_message">You cannot decode the noisy signal, because you have already decoded the encoded.</c:String>
+    <c:String x:Key="languege">Languege</c:String>
+    <c:String x:Key="en">En</c:String>
+    <c:String x:Key="ru">Ru</c:String>
+    <c:String x:Key="saved_at">Saved at</c:String>
+</ResourceDictionary>
