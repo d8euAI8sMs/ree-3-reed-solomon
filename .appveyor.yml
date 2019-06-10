@@ -2,20 +2,23 @@ version: '{build}'
 
 image:
   - Visual Studio 2017
-  
+
 environment:
   project_name: reed-solomon
   project_tests_name: reed-solomon.test
+  project_ui_name: ReedSolomonApp
 
 platform:
   - x86
+  - x64
 
 configuration:
+  - Debug
   - Release
 
 install:
   - git submodule update --init --recursive
-  
+
 before_build:
 - cd src\%project_name%\
 - nuget restore
@@ -23,10 +26,14 @@ before_build:
 
 build:
   project: src\%project_name%\%project_name%.sln
-  
+
+after_build:
+  - if %PLATFORM% == x86 (cd "src\%project_name%\%CONFIGURATION%" && 7z a -r ..\..\..\%project_name%-%PLATFORM%-%CONFIGURATION%.zip . && cd ..\..\..)
+  - if %PLATFORM% == x64 (cd "src\%project_name%\x64\%CONFIGURATION%" && 7z a -r ..\..\..\..\%project_name%-%PLATFORM%-%CONFIGURATION%.zip . && cd ..\..\..\..)
+
 test_script:
-  - vstest.console /logger:Appveyor src\%project_name%\%CONFIGURATION%\%project_tests_name%.dll
+  - if %PLATFORM% == x86 (vstest.console /logger:Appveyor src\%project_name%\%CONFIGURATION%\%project_tests_name%.dll)
+  - if %PLATFORM% == x64 (vstest.console /logger:Appveyor src\%project_name%\x64\%CONFIGURATION%\%project_tests_name%.dll)
 
 artifacts:
-  - path: 'src\%project_name%\%CONFIGURATION%\%project_name%.dll'
-  - path: 'src\%project_name%\%CONFIGURATION%\%project_tests_name%.dll'
+  - path: '%project_name%-%PLATFORM%-%CONFIGURATION%.zip'
