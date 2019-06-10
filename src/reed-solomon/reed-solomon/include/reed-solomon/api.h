@@ -114,5 +114,5 @@ extern "C"
 
     inline RS_API errc_t ReedSolomonNoise(buf_t inout, word_t gv, size_t ec, float freq) { return rs_noise(inout, gv, ec, freq); }
 
-    inline RS_API errc_t ReedSolomonDecode(buf_t in, byte_t gv, buf_t & out) { return rs_decode(in, gv, out); }
+    inline RS_API errc_t ReedSolomonDecode(buf_t in, word_t gv, buf_t & out) { return rs_decode(in, gv, out); }
 }
