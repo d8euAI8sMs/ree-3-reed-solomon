@@ -1,0 +1,165 @@
+﻿<Window
+    x:Class="ReedSolomonApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:e="http://schemas.xceed.com/wpf/xaml/toolkit"
+    mc:Ignorable="d"
+    Title="{DynamicResource main_window_title}"
+    Height="{StaticResource window_height}"
+    Width="{StaticResource window_width}"
+    MinHeight="{StaticResource window_height}"
+    MinWidth="{StaticResource window_width}"
+    Icon="../Resources/icon.ico"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Closing="OnWindowClosing">
+    <Grid
+        Margin="{StaticResource medium_thickness}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid
+            Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <e:WatermarkTextBox
+                x:Name="inputTextBox"
+                AcceptsReturn="True"
+                Grid.Row="0"
+                Margin="{StaticResource low_thickness}"
+                Watermark="{DynamicResource enter_input_text}"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                TextChanged="OnInputTextChanged" />
+            <Grid
+                Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    x:Name="changeTextBoxViewButton"
+                    Grid.Column="0"
+                    Margin="{StaticResource low_thickness}"
+                    IsEnabled="False"
+                    Content="{DynamicResource bytes}"
+                    Click="OnChangeTextViewClicked" />
+            </Grid>
+            <e:WatermarkTextBox
+                x:Name="resultTextBox"
+                AcceptsReturn="True"
+                Grid.Row="2"
+                Margin="{StaticResource low_thickness}"
+                IsReadOnly="True"
+                TextWrapping="WrapWithOverflow"
+                VerticalScrollBarVisibility="Auto" />
+            <Grid
+                Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    x:Name="encodeButton"
+                    Grid.Column="0"
+                    Margin="{StaticResource low_thickness}"
+                    IsEnabled="False"
+                    Content="{DynamicResource encode}"
+                    Click="OnEncodeClicked" />
+                <Button
+                    x:Name="noiseButton"
+                    Grid.Column="1"
+                    Margin="{StaticResource low_thickness}"
+                    IsEnabled="False"
+                    Content="{DynamicResource noise}"
+                    Click="OnNoiseClicked" />
+                <Button
+                    x:Name="decodeButton"
+                    Grid.Column="2"
+                    Margin="{StaticResource low_thickness}"
+                    IsEnabled="False"
+                    Content="{DynamicResource decode}"
+                    Click="OnDecodeClicked" />
+                <Button
+                    x:Name="serialiseButton"
+                    Grid.Column="4"
+                    Margin="{StaticResource low_thickness}"
+                    IsEnabled="False"
+                    Content="{DynamicResource save}"
+                    Click="OnSaveClicked" />
+            </Grid>
+        </Grid>
+        <Expander
+            ExpandDirection="Right"
+            Grid.Column="1"
+            Margin="{StaticResource medium_thickness}">
+            <StackPanel
+                VerticalAlignment="Top"
+                Margin="{StaticResource low_thickness}"
+                Width="{StaticResource data_collumn_width}">
+                <TextBlock
+                    Text="{DynamicResource pol_gen}" />
+                <e:WatermarkTextBox
+                    x:Name="polGenTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
+                    Watermark="{DynamicResource default}" />
+                <TextBlock
+                    x:Name="errCountTextBlock"
+                    Margin="{StaticResource stack_thickness}"
+                    Text="{DynamicResource err_count}" />
+                <e:WatermarkTextBox
+                    x:Name="errCountTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
+                    Watermark="{DynamicResource default}" />
+                <TextBlock
+                    x:Name="errFrequencyTextBlock"
+                    Margin="{StaticResource stack_thickness}"
+                    Text="{DynamicResource err_freq}" />
+                <e:WatermarkTextBox
+                    x:Name="errFrequencyTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
+                    Watermark="{DynamicResource default}" />
+                <TextBlock
+                    x:Name="filePathTextBlock"
+                    Margin="{StaticResource stack_thickness}"
+                    Text="{DynamicResource path}" />
+                <e:WatermarkTextBox
+                    x:Name="filePathTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
+                    Watermark="{DynamicResource default}" />
+                <ComboBox
+                    x:Name="langBox"
+                    Margin="{StaticResource low_thickness}"
+                    IsEditable="False"
+                    SelectionChanged="OnLangChanged">
+                    <ComboBoxItem
+                        Content="{DynamicResource en}"
+                        Selector.IsSelected="True" />
+                    <ComboBoxItem
+                        Content="{DynamicResource ru}" />
+                </ComboBox>
+                <Button
+                    x:Name="resetButton"
+                    Grid.Column="6"
+                    Margin="{StaticResource high_thickness}"
+                    Content="{DynamicResource reset}"
+                    IsEnabled="False"
+                    Click="OnResetClicked" />
+            </StackPanel>
+        </Expander>
+    </Grid>
+</Window>

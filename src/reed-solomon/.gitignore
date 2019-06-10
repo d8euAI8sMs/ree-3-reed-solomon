@@ -1,12 +1,13 @@
 *.sdf
 *.opensdf
 *.suo
-*.vcxproj.user
+*.user
 *.aps
 .vs
 obj
 ipch
 Debug
 Release
+packages
 bin
 ReadMe.txt

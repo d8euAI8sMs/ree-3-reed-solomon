@@ -1,0 +1,31 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:System;assembly=mscorlib">
+    <c:String x:Key="main_window_title">Reed-Solomon кодирование</c:String>
+    <c:String x:Key="save">Сохранить закодированные байты</c:String>
+    <c:String x:Key="bytes">Байты</c:String>
+    <c:String x:Key="text">Текст</c:String>
+    <c:String x:Key="encode">Кодирование</c:String>
+    <c:String x:Key="decode">Декодирование</c:String>
+    <c:String x:Key="noise">Шум</c:String>
+    <c:String x:Key="enter_input_text">Введите текст для кодирования...</c:String>
+    <c:String x:Key="pol_gen">Порождающий полином</c:String>
+    <c:String x:Key="err_count">Число ошибок</c:String>
+    <c:String x:Key="err_freq">Последовательность ошибки</c:String>
+    <c:String x:Key="default">По умолчанию</c:String>
+    <c:String x:Key="reset">Сброс</c:String>
+    <c:String x:Key="reset_message">Сбросить всё?</c:String>
+    <c:String x:Key="success">Успех</c:String>
+    <c:String x:Key="noise_decoded_message">Зашумлённые данные успешно декодированы</c:String>
+    <c:String x:Key="clear_decoded_message">Исходные данные успешно декодированы</c:String>
+    <c:String x:Key="path">Выходной каталог</c:String>
+    <c:String x:Key="error">Ошибка!</c:String>
+    <c:String x:Key="incorrect_data">Некорректные данные!</c:String>
+    <c:String x:Key="attantion">Внимание!</c:String>
+    <c:String x:Key="noise_postponed_message">Вы не сможете декодировать зашумлённые данные, т.к. исходные данные уже декодированы.</c:String>
+    <c:String x:Key="languege">Язык</c:String>
+    <c:String x:Key="en">Англ</c:String>
+    <c:String x:Key="ru">Рус</c:String>
+    <c:String x:Key="saved_at">Сохранено в</c:String>
+</ResourceDictionary>
