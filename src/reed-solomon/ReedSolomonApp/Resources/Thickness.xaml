@@ -4,4 +4,6 @@
     <Thickness x:Key="low_thickness">5</Thickness>
     <Thickness x:Key="medium_thickness">10</Thickness>
     <Thickness x:Key="high_thickness">20</Thickness>
+    <Thickness x:Key="stack_low_thickness" Top="5" />
+    <Thickness x:Key="stack_thickness" Top="10" />
 </ResourceDictionary>

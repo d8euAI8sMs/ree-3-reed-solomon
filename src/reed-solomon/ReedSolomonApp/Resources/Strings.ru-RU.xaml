@@ -2,16 +2,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:c="clr-namespace:System;assembly=mscorlib">
-    <c:String x:Key="main_window_title">Reed-Solomon шифрование</c:String>
+    <c:String x:Key="main_window_title">Reed-Solomon кодирование</c:String>
     <c:String x:Key="save">Сохранить закодированные байты</c:String>
     <c:String x:Key="bytes">Байты</c:String>
     <c:String x:Key="text">Текст</c:String>
-    <c:String x:Key="encode">Кодировка</c:String>
-    <c:String x:Key="decode">Декодировка</c:String>
+    <c:String x:Key="encode">Кодирование</c:String>
+    <c:String x:Key="decode">Декодирование</c:String>
     <c:String x:Key="noise">Шум</c:String>
     <c:String x:Key="enter_input_text">Введите текст для кодирования...</c:String>
-    <c:String x:Key="pol_gen">Генератор полинома</c:String>
-    <c:String x:Key="err_count">Число ошибки</c:String>
+    <c:String x:Key="pol_gen">Порождающий полином</c:String>
+    <c:String x:Key="err_count">Число ошибок</c:String>
     <c:String x:Key="err_freq">Последовательность ошибки</c:String>
     <c:String x:Key="default">По умолчанию</c:String>
     <c:String x:Key="reset">Сброс</c:String>

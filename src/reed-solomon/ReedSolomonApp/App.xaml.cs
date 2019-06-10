@@ -1,5 +1,6 @@
 ﻿using ReedSolomonApp.Utils;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -12,34 +13,36 @@ namespace ReedSolomonApp
     {
         private const string ResourceString = "Resources/Strings.";
 
-        public static readonly CultureInfo Rus = new CultureInfo(Langs.Ru.GetStringAttributeValue());
-        public static readonly CultureInfo Eng = new CultureInfo(Langs.En.GetStringAttributeValue());
+        private static readonly CultureInfo Eng = new CultureInfo(Langs.En.GetStringAttributeValue());
+        private static readonly CultureInfo Rus = new CultureInfo(Langs.Ru.GetStringAttributeValue());
+        private static readonly Dictionary<Langs, CultureInfo> LangRes = new Dictionary<Langs, CultureInfo>
+        {
+            { Langs.En, Eng },
+            { Langs.Ru, Rus }
+        };
+
         private static Langs currentLang = Langs.En;
 
-        public static CultureInfo Language
+        public static Langs Language
         {
             get
             {
                 CheckUIThread();
-                return Thread.CurrentThread.CurrentUICulture;
+                return currentLang;
             }
             set
             {
                 CheckUIThread();
-
-                if (value == null)
-                    throw new ArgumentNullException();
-
-                if (value != Thread.CurrentThread.CurrentUICulture)
+                if (value != currentLang)
                 {
-                    Thread.CurrentThread.CurrentUICulture = value;
-
+                    Thread.CurrentThread.CurrentUICulture = LangRes[value];
                     var dict = new ResourceDictionary();
-                    if (value.Equals(Rus))
+                    if (Thread.CurrentThread.CurrentUICulture.Equals(Rus))
                     {
-                        dict.Source = new Uri(string.Format("{0}{1}.xaml", ResourceString, value.Name), UriKind.Relative);
+                        dict.Source = new Uri(string.Format("{0}{1}.xaml", ResourceString,
+                            Thread.CurrentThread.CurrentUICulture.Name), UriKind.Relative);
                     }
-                    else if (value.Equals(Eng))
+                    else if (Thread.CurrentThread.CurrentUICulture.Equals(Eng))
                     {
                         dict.Source = new Uri(string.Format("{0}xaml", ResourceString), UriKind.Relative);
                     }
@@ -55,12 +58,14 @@ namespace ReedSolomonApp
 
                     if (oldDict != null)
                     {
-                        int ind = Current.Resources.MergedDictionaries.IndexOf(oldDict);
+                        int index = Current.Resources.MergedDictionaries.IndexOf(oldDict);
                         Current.Resources.MergedDictionaries.Remove(oldDict);
-                        Current.Resources.MergedDictionaries.Insert(ind, dict);
+                        Current.Resources.MergedDictionaries.Insert(index, dict);
                     }
                     else
                         Current.Resources.MergedDictionaries.Add(dict);
+
+                    currentLang = value;
                 }
             }
         }

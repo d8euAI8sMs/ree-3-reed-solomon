@@ -6,7 +6,6 @@ using System.IO;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using static ReedSolomonApp.NativeReedSolomon;
 using static ReedSolomonApp.App;
 
@@ -20,9 +19,13 @@ namespace ReedSolomonApp
         private string inputText;
         private bool isBytesView;
         private byte[] encodedBytes;
+        private string encodedText;
+        private ViewState viewState = ViewState.None;
 #if NOISE_DECODE_ENABLE
         private byte[] noisedBytes;
+        private string noisedText;
         private byte[] decodedBytes;
+        private string decodedText;
 #endif
 
         private NativeReedSolomonImpl ReedSolomonImpl
@@ -75,10 +78,12 @@ namespace ReedSolomonApp
         {
             if (e.Code == RSCode.Success)
             {
+                viewState = ViewState.Encode;
                 encodedBytes = e.Result.ToArray();
-                resultTextBox.Text = GetByteStr(encodedBytes);
-                serialiseButton.IsEnabled = resetButton.IsEnabled
-                    = inputTextBox.IsReadOnly = true;
+                encodedText = GetStringFromBytes(encodedBytes);
+                resultTextBox.Text = GetResultTextBoxText(viewState);
+                serialiseButton.IsEnabled = resetButton.IsEnabled = true;
+                inputTextBox.IsReadOnly = false;
 #if NOISE_DECODE_ENABLE
                 noiseButton.IsEnabled = decodeButton.IsEnabled = true;
 #endif
@@ -93,7 +98,10 @@ namespace ReedSolomonApp
             noisedBytes = e.Result.ToArray();
             if (e.Code == RSCode.Success)
             {
-                resultTextBox.Text = GetByteStr(noisedBytes);
+                viewState = ViewState.Noise;
+                noisedBytes = e.Result.ToArray();
+                noisedText = GetStringFromBytes(noisedBytes);
+                resultTextBox.Text = GetResultTextBoxText(viewState);
                 if (decodedBytes != null)
                     MessageBox.Show(this, GetStringResource("noise_postponed_message"), GetStringResource("attantion"));
             }
@@ -106,7 +114,10 @@ namespace ReedSolomonApp
             decodedBytes = e.Result.ToArray();
             if (e.Code == RSCode.Success)
             {
-                resultTextBox.Text = GetByteStr(decodedBytes);
+                viewState = ViewState.Decode;
+                decodedBytes = e.Result.ToArray();
+                decodedText = GetStringFromBytes(decodedBytes);
+                resultTextBox.Text = GetResultTextBoxText(viewState);
             }
             else
                 OnReedSolomonError(e.Code);
@@ -121,30 +132,38 @@ namespace ReedSolomonApp
         private void OnEncodeClicked(object sender, RoutedEventArgs e)
         {
             CheckUIThread();
-
-            if (encodedBytes == null)
+            if (encodedBytes == null || MessageBoxResult.Yes == MessageBox.Show(this,
+                GetStringResource("reset_message"), GetStringResource("encode"), MessageBoxButton.YesNo))
             {
+                encodedBytes = null;
+#if NOISE_DECODE_ENABLE
+                noisedBytes = decodedBytes = null;
+#endif
+                inputText = string.Empty;
                 var message = Encoding.ASCII.GetBytes(string.IsNullOrEmpty(inputText) ? inputTextBox.Text : inputText);
                 ReedSolomonImpl = new NativeReedSolomonImpl(message);
 
                 if (string.IsNullOrEmpty(polGenTextBox.Text))
                 {
-                    ReedSolomonImpl.PolynomialGenerator = DefaultPolinomialGenerator;
+                    ReedSolomonImpl.GeneratorPolynomial = DefaultGeneratorPolynomial;
                 }
                 else if (ushort.TryParse(polGenTextBox.Text, out var pg))
                 {
-                    ReedSolomonImpl.PolynomialGenerator = pg;
+                    ReedSolomonImpl.GeneratorPolynomial = pg;
                 }
                 else
                 {
-                    OnIncorrectData(nameof(ReedSolomonImpl.PolynomialGenerator));
+                    OnIncorrectData(nameof(ReedSolomonImpl.GeneratorPolynomial));
                     ReedSolomonImpl = null;
                     return;
                 }
                 ReedSolomonImpl.EncodeAsync();
             }
             else
-                resultTextBox.Text = GetByteStr(encodedBytes);
+            {
+                viewState = ViewState.Encode;
+                resultTextBox.Text = GetResultTextBoxText(viewState);
+            }
         }
 
         private void OnNoiseClicked(object sender, RoutedEventArgs e)
@@ -170,9 +189,9 @@ namespace ReedSolomonApp
 
                 if (string.IsNullOrEmpty(errFrequencyTextBox.Text))
                 {
-                    ReedSolomonImpl.ErrorFrequency = DefaultErrorFrequence;
+                    ReedSolomonImpl.ErrorFrequency = DefaultErrorFrequency;
                 }
-                else if (ushort.TryParse(errFrequencyTextBox.Text, out var ef))
+                else if (float.TryParse(errFrequencyTextBox.Text, out var ef))
                 {
                     ReedSolomonImpl.ErrorFrequency = ef;
                 }
@@ -184,7 +203,10 @@ namespace ReedSolomonApp
                 ReedSolomonImpl.NoiseAsync();
             }
             else
-                resultTextBox.Text = GetByteStr(noisedBytes);
+            {
+                viewState = ViewState.Noise;
+                resultTextBox.Text = GetResultTextBoxText(viewState);
+            }
 #endif
         }
 
@@ -197,21 +219,24 @@ namespace ReedSolomonApp
             {
                 if (string.IsNullOrEmpty(polGenTextBox.Text))
                 {
-                    ReedSolomonImpl.PolynomialGenerator = DefaultPolinomialGenerator;
+                    ReedSolomonImpl.GeneratorPolynomial = DefaultGeneratorPolynomial;
                 }
                 else if (ushort.TryParse(polGenTextBox.Text, out var pg))
                 {
-                    ReedSolomonImpl.ErrorCount = pg;
+                    ReedSolomonImpl.GeneratorPolynomial = pg;
                 }
                 else
                 {
-                    OnIncorrectData(nameof(ReedSolomonImpl.PolynomialGenerator));
+                    OnIncorrectData(nameof(ReedSolomonImpl.GeneratorPolynomial));
                     return;
                 }
                 ReedSolomonImpl.DecodeAsync();
             }
             else
-                resultTextBox.Text = GetByteStr(decodedBytes);
+            {
+                viewState = ViewState.Decode;
+                resultTextBox.Text = GetResultTextBoxText(viewState);
+            }
 #endif
         }
 
@@ -254,10 +279,10 @@ namespace ReedSolomonApp
             {
                 changeTextBoxViewButton.Content = GetStringResource("text");
                 inputText = inputTextBox.Text;
-                inputTextBox.Text = BitConverter.ToString(Encoding.ASCII.GetBytes(inputText))
-                    .Replace('-', ' ');
+                inputTextBox.Text = GetHEXString(Encoding.ASCII.GetBytes(inputText));
                 inputTextBox.IsReadOnly = isBytesView = true;
             }
+            resultTextBox.Text = GetResultTextBoxText(viewState);
         }
 
         private void OnWindowClosing(object sender, CancelEventArgs e) => ReedSolomonImpl = null;
@@ -274,17 +299,7 @@ namespace ReedSolomonApp
             {
                 if (IsLoaded)
                 {
-                    switch (cb.SelectedIndex)
-                    {
-                        case (int)Langs.Ru:
-                            App.Language = Rus;
-                            break;
-                        case (int)Langs.En:
-                            App.Language = Eng;
-                            break;
-                        default:
-                            throw new NotSupportedException();
-                    }
+                    App.Language = (Langs)Enum.ToObject(typeof(Langs), cb.SelectedIndex);
                     changeTextBoxViewButton.Content = isBytesView
                         ? GetStringResource("text")
                         : GetStringResource("bytes");
@@ -315,14 +330,42 @@ namespace ReedSolomonApp
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MessageBoxResult OnIncorrectData(string arg) => MessageBox.Show(this, arg, "incorrect_data");
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MessageBoxResult OnReedSolomonError(RSCode code)
             => MessageBox.Show(this, code.GetStringAttributeValue(), GetStringResource("error"));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string GetByteStr(byte[] bytes) => BitConverter.ToString(bytes).Replace('-', ' ');
+        private string GetHEXString(byte[] bytes) => BitConverter.ToString(bytes).Replace('-', ' ');
+
+        private string GetStringFromBytes(byte[] bytes) => Encoding.ASCII.GetString(bytes);
+
+        private string GetResultTextBoxText(ViewState viewState)
+        {
+            switch (viewState)
+            {
+                case ViewState.None:
+                    return string.Empty;
+                case ViewState.Encode:
+                    return isBytesView ? GetHEXString(encodedBytes) : encodedText;
+#if NOISE_DECODE_ENABLE
+                case ViewState.Noise:
+                    return isBytesView ? GetHEXString(noisedBytes) : noisedText;
+                case ViewState.Decode:
+                    return isBytesView ? GetHEXString(decodedBytes) : decodedText;
+#endif
+                default:
+                    throw new InvalidEnumArgumentException(string.Format("Unhandled argument: {0}", viewState.ToString()));
+            }
+        }
+
+        private enum ViewState
+        {
+            None,
+            Encode,
+#if NOISE_DECODE_ENABLE
+            Noise,
+            Decode
+#endif
+        }
     }
 }

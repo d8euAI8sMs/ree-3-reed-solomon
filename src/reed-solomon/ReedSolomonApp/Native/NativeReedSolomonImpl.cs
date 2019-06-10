@@ -17,7 +17,7 @@ namespace ReedSolomonApp
 #endif
 
         public byte[] Message { get; private set; }
-        public ushort PolynomialGenerator { get; set; }
+        public ushort GeneratorPolynomial { get; set; }
 #if NOISE_DECODE_ENABLE
         public ulong ErrorCount { get; set; }
         public float ErrorFrequency { get; set; }
@@ -59,7 +59,7 @@ namespace ReedSolomonApp
             }
 
             outEncoded = new RSBuffer();
-            var code =  ReedSolomonEncode(input, PolynomialGenerator, ref outEncoded);
+            var code =  ReedSolomonEncode(input, GeneratorPolynomial, ref outEncoded);
             var encodedBytes = new byte[outEncoded.Length];
             if (code == RSCode.Success)
             {
@@ -86,7 +86,7 @@ namespace ReedSolomonApp
 #endif
             }
 
-            var code = ReedSolomonNoise(outEncoded, PolynomialGenerator, ErrorCount, ErrorFrequency);
+            var code = ReedSolomonNoise(outEncoded, GeneratorPolynomial, ErrorCount, ErrorFrequency);
             var noisedBytes = new byte[outEncoded.Length];
             if (code == RSCode.Success)
             {
@@ -114,7 +114,7 @@ namespace ReedSolomonApp
             }
 
             outDecoded = new RSBuffer();
-            var code = ReedSolomonDecode(outEncoded, PolynomialGenerator, ref outDecoded);
+            var code = ReedSolomonDecode(outEncoded, GeneratorPolynomial, ref outDecoded);
             var decodedBytes = new byte[outDecoded.Length];
             if (code == RSCode.Success)
             {
@@ -142,17 +142,17 @@ namespace ReedSolomonApp
                 Marshal.FreeHGlobal(input);
         }
 
-        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonFree")]
+        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonFree", CallingConvention = CallingConvention.Cdecl)]
         private static extern RSCode ReedSolomonFree(IntPtr ptr);
 
-        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonEncode")]
+        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonEncode", CallingConvention = CallingConvention.Cdecl)]
         private static extern RSCode ReedSolomonEncode(RSBuffer input, ushort gv, ref RSBuffer output);
 
 #if NOISE_DECODE_ENABLE
-        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonNoise")]
+        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonNoise", CallingConvention = CallingConvention.Cdecl)]
         private static extern RSCode ReedSolomonNoise(RSBuffer buf, ushort gv, ulong ec, float freq);
 
-        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonDecode")]
+        [DllImport("reed-solomon.dll", EntryPoint = "ReedSolomonDecode", CallingConvention = CallingConvention.Cdecl)]
         private static extern RSCode ReedSolomonDecode(RSBuffer input, ushort gv, ref RSBuffer output);
 #endif
 

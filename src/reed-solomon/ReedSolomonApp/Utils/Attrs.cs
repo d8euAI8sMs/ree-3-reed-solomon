@@ -2,7 +2,7 @@
 
 namespace ReedSolomonApp.Utils
 {
-    public class StringAttribute : Attribute
+    public sealed class StringAttribute : Attribute
     {
         public string Value { get; }
 

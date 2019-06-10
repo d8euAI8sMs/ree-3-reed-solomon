@@ -115,24 +115,31 @@
                     Text="{DynamicResource pol_gen}" />
                 <e:WatermarkTextBox
                     x:Name="polGenTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
                     Watermark="{DynamicResource default}" />
                 <TextBlock
                     x:Name="errCountTextBlock"
+                    Margin="{StaticResource stack_thickness}"
                     Text="{DynamicResource err_count}" />
                 <e:WatermarkTextBox
                     x:Name="errCountTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
                     Watermark="{DynamicResource default}" />
                 <TextBlock
                     x:Name="errFrequencyTextBlock"
+                    Margin="{StaticResource stack_thickness}"
                     Text="{DynamicResource err_freq}" />
                 <e:WatermarkTextBox
                     x:Name="errFrequencyTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
                     Watermark="{DynamicResource default}" />
                 <TextBlock
                     x:Name="filePathTextBlock"
+                    Margin="{StaticResource stack_thickness}"
                     Text="{DynamicResource path}" />
                 <e:WatermarkTextBox
                     x:Name="filePathTextBox"
+                    Margin="{StaticResource stack_low_thickness}"
                     Watermark="{DynamicResource default}" />
                 <ComboBox
                     x:Name="langBox"

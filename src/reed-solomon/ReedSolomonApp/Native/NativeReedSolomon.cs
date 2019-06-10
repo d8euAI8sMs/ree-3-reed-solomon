@@ -5,10 +5,10 @@ namespace ReedSolomonApp
 {
     public static class NativeReedSolomon
     {
-        public const ushort DefaultPolinomialGenerator = 11;
+        public const ushort DefaultGeneratorPolynomial = 11;
 #if NOISE_DECODE_ENABLE
         public const ulong DefaultErrorCount = 3UL;
-        public const float DefaultErrorFrequence = 0.5f;
+        public const float DefaultErrorFrequency = 0.5f;
 #endif
 
         public enum RSCode
@@ -19,7 +19,7 @@ namespace ReedSolomonApp
             OutOfMemory,
             [String("Insufficient buffer space")]
             InsufficientBufferSpace,
-            [String("Invalid Argument")]
+            [String("Invalid argument")]
             InvalidArgument,
             [String("Unhandled")]
             Unhandled
