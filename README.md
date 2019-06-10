@@ -14,7 +14,7 @@ Reed-Solomon over GF(2^8) encoder-decoder implementation.
 
 ## Details
 
-Visual Studio 2017 project (C++).
+Visual Studio 2017 project (C++, C#).
 
 ## Getting Source Code
 
